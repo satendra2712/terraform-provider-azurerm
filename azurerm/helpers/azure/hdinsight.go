@@ -262,6 +262,7 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 	}
 
 	if canSpecifyCount {
+		// TODO: should we make this validate func optional?
 		result["min_instance_count"] = &schema.Schema{
 			Type:         schema.TypeInt,
 			Optional:     true,
