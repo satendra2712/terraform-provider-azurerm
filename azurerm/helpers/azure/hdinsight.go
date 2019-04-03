@@ -12,7 +12,6 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/helpers/validate"
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
-	"github.com/terraform-providers/terraform-provider-azurestack/azurestack/helpers/azure"
 )
 
 func SchemaHDInsightName() *schema.Schema {
@@ -251,14 +250,14 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 			Type:         schema.TypeString,
 			Optional:     true,
 			ForceNew:     true,
-			ValidateFunc: azure.ValidateResourceIDOrEmpty,
+			ValidateFunc: ValidateResourceIDOrEmpty,
 		},
 
 		"virtual_network_id": {
 			Type:         schema.TypeString,
 			Optional:     true,
 			ForceNew:     true,
-			ValidateFunc: azure.ValidateResourceIDOrEmpty,
+			ValidateFunc: ValidateResourceIDOrEmpty,
 		},
 	}
 
