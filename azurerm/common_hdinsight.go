@@ -36,7 +36,7 @@ func hdinsightClusterUpdate(clusterKind string) func(d *schema.ResourceData, met
 			log.Printf("[DEBUG] Resizing the HDInsight %q Cluster", clusterKind)
 			rolesRaw := d.Get("roles").([]interface{})
 			roles := rolesRaw[0].(map[string]interface{})
-			headNodes := roles["head_node"].([]interface{})
+			headNodes := roles["worker_node"].([]interface{})
 			headNode := headNodes[0].(map[string]interface{})
 			targetInstanceCount := headNode["target_instance_count"].(int)
 			params := hdinsight.ClusterResizeParameters{
