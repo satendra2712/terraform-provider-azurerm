@@ -210,7 +210,7 @@ func ExpandHDInsightsStorageAccounts(input []interface{}) (*[]hdinsight.StorageA
 	return &results, nil
 }
 
-func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, maxCount int, validVMSizes []string) *schema.Schema {
+func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, maxCount int, validVMSizes []string, canSpecifyDisks bool, maxNumberOfDisksPerNode *int) *schema.Schema {
 	result := map[string]*schema.Schema{
 		"vm_size": {
 			Type:     schema.TypeString,
@@ -276,6 +276,14 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 		}
 	}
 
+	if canSpecifyDisks {
+		result["number_of_disks_per_node"] = &schema.Schema{
+			Type:         schema.TypeInt,
+			Optional:     true,
+			ValidateFunc: validation.IntBetween(1, *maxNumberOfDisksPerNode),
+		}
+	}
+
 	return &schema.Schema{
 		Type:     schema.TypeList,
 		Required: true,
@@ -286,7 +294,7 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 	}
 }
 
-func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyCount bool, fixedMinCount *int32, fixedTargetCount *int32) (*hdinsight.Role, error) {
+func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyCount bool, fixedMinCount *int32, fixedTargetCount *int32, canSpecifyDisks bool) (*hdinsight.Role, error) {
 	v := input[0].(map[string]interface{})
 	vmSize := v["vm_size"].(string)
 	username := v["username"].(string)
@@ -348,6 +356,15 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyC
 	} else {
 		role.MinInstanceCount = fixedMinCount
 		role.TargetInstanceCount = fixedTargetCount
+	}
+
+	if canSpecifyDisks {
+		numberOfDisksPerNode := v["number_of_disks_per_node"].(int)
+		role.DataDisksGroups = &[]hdinsight.DataDisksGroups{
+			{
+				DisksPerNode: utils.Int32(int32(numberOfDisksPerNode)),
+			},
+		}
 	}
 
 	return &role, nil

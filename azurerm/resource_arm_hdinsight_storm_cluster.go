@@ -92,7 +92,8 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 							canSpecifyCount := false
 							minInstanceCount := 4
 							maxInstanceCount := 4
-							return azure.SchemaHDInsightNodeDefinition("roles.0.head_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes)
+							canSpecifyDisks := false
+							return azure.SchemaHDInsightNodeDefinition("roles.0.head_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
 						}(),
 
 						"worker_node": func() *schema.Schema {
@@ -132,7 +133,8 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 							// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
 							minInstanceCount := 1
 							maxInstanceCount := 9999
-							return azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes)
+							canSpecifyDisks := false
+							return azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
 						}(),
 
 						"zookeeper_node": func() *schema.Schema {
@@ -144,7 +146,8 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 							canSpecifyCount := false
 							minInstanceCount := 3
 							maxInstanceCount := 3
-							return azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes)
+							canSpecifyDisks := false
+							return azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
 						}(),
 					},
 				},
@@ -342,14 +345,14 @@ func expandHDInsightStormRoles(input []interface{}) (*[]hdinsight.Role, error) {
 	headNodeRaw := v["head_node"].([]interface{})
 	headNodeCanSpecifyCount := false
 	headNodeTargetInstanceCount := utils.Int32(int32(2))
-	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, headNodeCanSpecifyCount, nil, headNodeTargetInstanceCount)
+	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, headNodeCanSpecifyCount, nil, headNodeTargetInstanceCount, false)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `head_node`: %+v", err)
 	}
 
 	workerNodeRaw := v["worker_node"].([]interface{})
 	workerNodeCanSpecifyCount := true
-	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, workerNodeCanSpecifyCount, nil, nil)
+	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, workerNodeCanSpecifyCount, nil, nil, false)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `worker_node`: %+v", err)
 	}
@@ -357,7 +360,7 @@ func expandHDInsightStormRoles(input []interface{}) (*[]hdinsight.Role, error) {
 	zookeeperNodeRaw := v["zookeeper_node"].([]interface{})
 	zookeeperNodeCanSpecifyCount := false
 	zookeeperNodeTargetInstanceCount := utils.Int32(int32(3))
-	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, zookeeperNodeCanSpecifyCount, nil, zookeeperNodeTargetInstanceCount)
+	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, zookeeperNodeCanSpecifyCount, nil, zookeeperNodeTargetInstanceCount, false)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `zookeeper_node`: %+v", err)
 	}
