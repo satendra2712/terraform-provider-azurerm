@@ -386,7 +386,7 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, definition 
 	return &role, nil
 }
 
-func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, canSetDisks bool, existing []interface{}, skuOverrides map[string]string) []interface{} {
+func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, canSetDisks bool, existing []interface{}) []interface{} {
 	if input == nil {
 		return []interface{}{}
 	}
@@ -415,16 +415,14 @@ func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, can
 
 		sshKeys := existingV["ssh_keys"].(*schema.Set).List()
 		output["ssh_keys"] = schema.NewSet(schema.HashString, sshKeys)
-	}
 
-	if profile := input.HardwareProfile; profile != nil {
-		if size := profile.VMSize; size != nil {
-			skuName := *size
-			if v, ok := skuOverrides[strings.ToLower(skuName)]; ok {
-				skuName = v
-			}
-			output["vm_size"] = skuName
-		}
+		// whilst the VMSize can be returned from `input.HardwareProfile.VMSize` - it can be malformed
+		// for example, `small`, `medium`, `large` and `extralarge` can be returned inside of actual VM Size
+		// after extensive experimentation it appears multiple instance sizes fit `extralarge`, as such
+		// unfortunately we can't transform these; since it can't be changed
+		// we should be "safe" to try and pull it from the state instead, but clearly this isn't ideal
+		vmSize := existingV["vm_size"].(string)
+		output["vm_size"] = vmSize
 	}
 
 	if profile := input.VirtualNetworkProfile; profile != nil {

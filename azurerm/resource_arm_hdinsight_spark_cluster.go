@@ -389,28 +389,17 @@ func flattenHDInsightSparkRoles(d *schema.ResourceData, input *hdinsight.Compute
 	headNode := azure.FindHDInsightRole(input.Roles, "headnode")
 	headNodeCanSetCount := false
 	headNodeCanSetDisks := false
-	headNodeSkuOverrides := map[string]string{
-		// TODO: try and determine these...
-		"large":      "Standard_A3",
-		"extralarge": "Standard_A4",
-	}
-	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, headNodeCanSetCount, headNodeCanSetDisks, existingHeadNodes, headNodeSkuOverrides)
+	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, headNodeCanSetCount, headNodeCanSetDisks, existingHeadNodes)
 
 	workerNode := azure.FindHDInsightRole(input.Roles, "workernode")
 	workerNodeCanSetCount := true
 	workerNodeCanSetDisks := false
-	workerNodeSkuOverrides := map[string]string{
-		// TODO: try and determine these...
-		"large":      "Standard_A3",
-		"extralarge": "Standard_A4",
-	}
-	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, workerNodeCanSetCount, workerNodeCanSetDisks, existingWorkerNodes, workerNodeSkuOverrides)
+	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, workerNodeCanSetCount, workerNodeCanSetDisks, existingWorkerNodes)
 
 	zookeeperNode := azure.FindHDInsightRole(input.Roles, "zookeepernode")
 	zookeeperNodeCanSetCount := false
-	zookeeperNodeSkuOverrides := make(map[string]string)
 	zookeeperNodeCanSetDisks := false
-	zookeeperNodes := azure.FlattenHDInsightNodeDefinition(zookeeperNode, zookeeperNodeCanSetCount, zookeeperNodeCanSetDisks, existingZookeeperNodes, zookeeperNodeSkuOverrides)
+	zookeeperNodes := azure.FlattenHDInsightNodeDefinition(zookeeperNode, zookeeperNodeCanSetCount, zookeeperNodeCanSetDisks, existingZookeeperNodes)
 
 	return []interface{}{
 		map[string]interface{}{
