@@ -12,7 +12,6 @@ import (
 )
 
 var hdInsightStormClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                     "roles.0.head_node",
 	CanSpecifyInstanceCount:  false,
 	MinInstanceCount:         4,
 	MaxInstanceCount:         4,
@@ -52,7 +51,6 @@ var hdInsightStormClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightStormClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.worker_node",
 	CanSpecifyInstanceCount: true,
 	MinInstanceCount:        1,
 	// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
@@ -93,7 +91,6 @@ var hdInsightStormClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightStormClusterZookeeperNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                     "roles.0.zookeeper_node",
 	CanSpecifyInstanceCount:  false,
 	MinInstanceCount:         3,
 	MaxInstanceCount:         3,
@@ -152,11 +149,11 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"head_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterHeadNodeDefinition),
+						"head_node": azure.SchemaHDInsightNodeDefinition("roles.0.head_node", hdInsightStormClusterHeadNodeDefinition),
 
-						"worker_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterWorkerNodeDefinition),
+						"worker_node": azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", hdInsightStormClusterWorkerNodeDefinition),
 
-						"zookeeper_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterZookeeperNodeDefinition),
+						"zookeeper_node": azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", hdInsightStormClusterZookeeperNodeDefinition),
 					},
 				},
 			},

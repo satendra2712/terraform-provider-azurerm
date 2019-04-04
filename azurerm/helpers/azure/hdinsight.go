@@ -218,15 +218,12 @@ type HDInsightNodeDefinition struct {
 	CanSpecifyDisks         bool
 	MaxNumberOfDisksPerNode *int
 
-	// TODO: make this an arg in the Schema method
-	Name string
-
 	// TODO: pull these in for the Expand
 	FixedMinInstanceCount    *int32
 	FixedTargetInstanceCount *int32
 }
 
-func SchemaHDInsightNodeDefinition(definition HDInsightNodeDefinition) *schema.Schema {
+func SchemaHDInsightNodeDefinition(schemaLocation string, definition HDInsightNodeDefinition) *schema.Schema {
 	result := map[string]*schema.Schema{
 		"vm_size": {
 			Type:     schema.TypeString,
@@ -258,7 +255,7 @@ func SchemaHDInsightNodeDefinition(definition HDInsightNodeDefinition) *schema.S
 			},
 			Set: schema.HashString,
 			ConflictsWith: []string{
-				fmt.Sprintf("%s.0.password", definition.Name),
+				fmt.Sprintf("%s.0.password", schemaLocation),
 			},
 		},
 

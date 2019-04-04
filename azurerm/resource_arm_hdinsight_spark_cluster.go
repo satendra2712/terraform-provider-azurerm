@@ -12,7 +12,6 @@ import (
 )
 
 var hdInsightSparkClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.head_node",
 	CanSpecifyInstanceCount: false,
 	MinInstanceCount:        2,
 	MaxInstanceCount:        2,
@@ -51,7 +50,6 @@ var hdInsightSparkClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightSparkClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.worker_node",
 	CanSpecifyInstanceCount: true,
 	MinInstanceCount:        1,
 	MaxInstanceCount:        19,
@@ -91,7 +89,6 @@ var hdInsightSparkClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightSparkClusterNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.zookeeper_node",
 	CanSpecifyInstanceCount: false,
 	MinInstanceCount:        3,
 	MaxInstanceCount:        3,
@@ -148,11 +145,11 @@ func resourceArmHDInsightSparkCluster() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"head_node": azure.SchemaHDInsightNodeDefinition(hdInsightSparkClusterHeadNodeDefinition),
+						"head_node": azure.SchemaHDInsightNodeDefinition("roles.0.head_node", hdInsightSparkClusterHeadNodeDefinition),
 
-						"worker_node": azure.SchemaHDInsightNodeDefinition(hdInsightSparkClusterWorkerNodeDefinition),
+						"worker_node": azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", hdInsightSparkClusterWorkerNodeDefinition),
 
-						"zookeeper_node": azure.SchemaHDInsightNodeDefinition(hdInsightSparkClusterNodeDefinition),
+						"zookeeper_node": azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", hdInsightSparkClusterNodeDefinition),
 					},
 				},
 			},

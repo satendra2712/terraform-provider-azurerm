@@ -12,7 +12,6 @@ import (
 )
 
 var hdInsightKafkaClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.head_node",
 	CanSpecifyInstanceCount: false,
 	MinInstanceCount:        2,
 	MaxInstanceCount:        2,
@@ -51,7 +50,6 @@ var hdInsightKafkaClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightKafkaClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.worker_node",
 	CanSpecifyInstanceCount: true,
 	MinInstanceCount:        1,
 	MaxInstanceCount:        57,
@@ -92,7 +90,6 @@ var hdInsightKafkaClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightKafkaClusterZookeeperNodeDefinition = azure.HDInsightNodeDefinition{
-	Name:                    "roles.0.zookeeper_node",
 	CanSpecifyInstanceCount: false,
 	MinInstanceCount:        3,
 	MaxInstanceCount:        3,
@@ -149,11 +146,11 @@ func resourceArmHDInsightKafkaCluster() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"head_node": azure.SchemaHDInsightNodeDefinition(hdInsightKafkaClusterHeadNodeDefinition),
+						"head_node": azure.SchemaHDInsightNodeDefinition("roles.0.head_node", hdInsightKafkaClusterHeadNodeDefinition),
 
-						"worker_node": azure.SchemaHDInsightNodeDefinition(hdInsightKafkaClusterWorkerNodeDefinition),
+						"worker_node": azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", hdInsightKafkaClusterWorkerNodeDefinition),
 
-						"zookeeper_node": azure.SchemaHDInsightNodeDefinition(hdInsightKafkaClusterZookeeperNodeDefinition),
+						"zookeeper_node": azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", hdInsightKafkaClusterZookeeperNodeDefinition),
 					},
 				},
 			},
