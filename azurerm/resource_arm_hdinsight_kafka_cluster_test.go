@@ -282,10 +282,11 @@ resource "azurerm_hdinsight_kafka_cluster" "test" {
     }
 
     worker_node {
-      vm_size               = "Standard_D3_V2"
-      username              = "acctestusrvm"
-      password              = "AccTestvdSC4daf986!"
-      target_instance_count = 3
+      vm_size                  = "Standard_D3_V2"
+      username                 = "acctestusrvm"
+      password                 = "AccTestvdSC4daf986!"
+      target_instance_count    = 3
+      number_of_disks_per_node = 2
     }
 
     zookeeper_node {
@@ -357,10 +358,11 @@ resource "azurerm_hdinsight_kafka_cluster" "test" {
     }
 
     worker_node {
-      vm_size               = "Standard_D3_V2"
-      username              = "acctestusrvm"
-      ssh_keys              = [ "${var.ssh_key}" ]
-      target_instance_count = 3
+      vm_size                  = "Standard_D3_V2"
+      username                 = "acctestusrvm"
+      ssh_keys                 = [ "${var.ssh_key}" ]
+      target_instance_count    = 3
+      number_of_disks_per_node = 2
     }
 
     zookeeper_node {
@@ -409,10 +411,11 @@ resource "azurerm_hdinsight_kafka_cluster" "test" {
     }
 
     worker_node {
-      vm_size               = "Standard_D3_V2"
-      username              = "acctestusrvm"
-      password              = "AccTestvdSC4daf986!"
-      target_instance_count = 5
+      vm_size                  = "Standard_D3_V2"
+      username                 = "acctestusrvm"
+      password                 = "AccTestvdSC4daf986!"
+      target_instance_count    = 5
+      number_of_disks_per_node = 2
     }
 
     zookeeper_node {
@@ -480,12 +483,13 @@ resource "azurerm_hdinsight_kafka_cluster" "test" {
     }
 
     worker_node {
-      vm_size               = "Standard_D3_V2"
-      username              = "acctestusrvm"
-      password              = "AccTestvdSC4daf986!"
-      target_instance_count = 3
-      subnet_id             = "${azurerm_subnet.test.id}"
-      virtual_network_id    = "${azurerm_virtual_network.test.id}"
+      vm_size                  = "Standard_D3_V2"
+      username                 = "acctestusrvm"
+      password                 = "AccTestvdSC4daf986!"
+      target_instance_count    = 3
+      number_of_disks_per_node = 2
+      subnet_id                = "${azurerm_subnet.test.id}"
+      virtual_network_id       = "${azurerm_virtual_network.test.id}"
     }
 
     zookeeper_node {
@@ -551,12 +555,13 @@ resource "azurerm_hdinsight_kafka_cluster" "test" {
     }
 
     worker_node {
-      vm_size               = "Standard_D3_V2"
-      username              = "acctestusrvm"
-      password              = "AccTestvdSC4daf986!"
-      target_instance_count = 3
-      subnet_id             = "${azurerm_subnet.test.id}"
-      virtual_network_id    = "${azurerm_virtual_network.test.id}"
+      vm_size                  = "Standard_D3_V2"
+      username                 = "acctestusrvm"
+      password                 = "AccTestvdSC4daf986!"
+      target_instance_count    = 3
+      number_of_disks_per_node = 2
+      subnet_id                = "${azurerm_subnet.test.id}"
+      virtual_network_id       = "${azurerm_virtual_network.test.id}"
     }
 
     zookeeper_node {
