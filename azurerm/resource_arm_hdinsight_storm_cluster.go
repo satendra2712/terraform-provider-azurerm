@@ -197,7 +197,10 @@ func resourceArmHDInsightStormClusterCreate(d *schema.ResourceData, meta interfa
 	}
 
 	rolesRaw := d.Get("roles").([]interface{})
-	roles, err := expandHDInsightStormRoles(rolesRaw)
+	roles, err := expandHDInsightRoles(rolesRaw,
+		hdInsightStormClusterHeadNodeDefinition,
+		hdInsightStormClusterWorkerNodeDefinition,
+		hdInsightStormClusterZookeeperNodeDefinition)
 	if err != nil {
 		return fmt.Errorf("Error expanding `roles`: %+v", err)
 	}
@@ -308,7 +311,11 @@ func resourceArmHDInsightStormClusterRead(d *schema.ResourceData, meta interface
 			}
 		}
 
-		if err := d.Set("roles", flattenHDInsightStormRoles(d, props.ComputeProfile)); err != nil {
+		flattenedRoles := flattenHDInsightRoles(d, props.ComputeProfile,
+			hdInsightStormClusterHeadNodeDefinition,
+			hdInsightStormClusterWorkerNodeDefinition,
+			hdInsightStormClusterZookeeperNodeDefinition)
+		if err := d.Set("roles", flattenedRoles); err != nil {
 			return fmt.Errorf("Error flattening `roles`: %+v", err)
 		}
 
@@ -340,68 +347,6 @@ func flattenHDInsightStormComponentVersion(input map[string]*string) []interface
 	return []interface{}{
 		map[string]interface{}{
 			"storm": stormVersion,
-		},
-	}
-}
-
-func expandHDInsightStormRoles(input []interface{}) (*[]hdinsight.Role, error) {
-	v := input[0].(map[string]interface{})
-
-	headNodeRaw := v["head_node"].([]interface{})
-	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, hdInsightStormClusterHeadNodeDefinition)
-	if err != nil {
-		return nil, fmt.Errorf("Error expanding `head_node`: %+v", err)
-	}
-
-	workerNodeRaw := v["worker_node"].([]interface{})
-	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, hdInsightStormClusterWorkerNodeDefinition)
-	if err != nil {
-		return nil, fmt.Errorf("Error expanding `worker_node`: %+v", err)
-	}
-
-	zookeeperNodeRaw := v["zookeeper_node"].([]interface{})
-	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, hdInsightStormClusterZookeeperNodeDefinition)
-	if err != nil {
-		return nil, fmt.Errorf("Error expanding `zookeeper_node`: %+v", err)
-	}
-
-	return &[]hdinsight.Role{
-		*headNode,
-		*workerNode,
-		*zookeeperNode,
-	}, nil
-}
-
-func flattenHDInsightStormRoles(d *schema.ResourceData, input *hdinsight.ComputeProfile) []interface{} {
-	if input == nil || input.Roles == nil {
-		return []interface{}{}
-	}
-
-	var existingHeadNodes, existingWorkerNodes, existingZookeeperNodes []interface{}
-
-	existingVs := d.Get("roles").([]interface{})
-	if len(existingVs) > 0 {
-		existingV := existingVs[0].(map[string]interface{})
-
-		existingHeadNodes = existingV["head_node"].([]interface{})
-		existingWorkerNodes = existingV["worker_node"].([]interface{})
-		existingZookeeperNodes = existingV["zookeeper_node"].([]interface{})
-	}
-
-	headNode := azure.FindHDInsightRole(input.Roles, "headnode")
-	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, existingHeadNodes, hdInsightStormClusterHeadNodeDefinition)
-
-	workerNode := azure.FindHDInsightRole(input.Roles, "workernode")
-	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, existingWorkerNodes, hdInsightStormClusterWorkerNodeDefinition)
-
-	zookeeperNode := azure.FindHDInsightRole(input.Roles, "zookeepernode")
-	zookeeperNodes := azure.FlattenHDInsightNodeDefinition(zookeeperNode, existingZookeeperNodes, hdInsightStormClusterZookeeperNodeDefinition)
-
-	return []interface{}{
-		map[string]interface{}{
-			"head_node":      headNodes,
-			"worker_node":    workerNodes,
-			"zookeeper_node": zookeeperNodes,
 		},
 	}
 }
