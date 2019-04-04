@@ -11,6 +11,101 @@ import (
 	"github.com/terraform-providers/terraform-provider-azurerm/azurerm/utils"
 )
 
+var hdInsightStormClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
+	Name:                     "roles.0.head_node",
+	CanSpecifyInstanceCount:  false,
+	MinInstanceCount:         4,
+	MaxInstanceCount:         4,
+	CanSpecifyDisks:          false,
+	FixedTargetInstanceCount: utils.Int32(int32(2)),
+	ValidVmSizes: []string{
+		// TODO: are these the same for the other types?
+		// only certain sizes are valid for certain machine types for certain kinds
+		// otherwise you get an unhelpful error. this is an attempt to make a better UX
+		"Standard_A3",
+		"Standard_A4",
+		"Standard_A4_v2",
+		"Standard_A4m_v2",
+		"Standard_A6",
+		"Standard_A7",
+		"Standard_A8_v2",
+		"Standard_A8m_v2",
+		"Standard_D12_v2",
+		"Standard_D13_v2",
+		"Standard_D14_v2",
+		"Standard_D3_v2",
+		"Standard_D4_v2",
+		"Standard_D5_v2",
+		"Standard_E16_v3",
+		"Standard_E20_v3",
+		"Standard_E2_v3",
+		"Standard_E32_v3",
+		"Standard_E4_v3",
+		"Standard_E64_v3",
+		"Standard_E64i_v3",
+		"Standard_E8_v3",
+		"Standard_G2",
+		"Standard_G3",
+		"Standard_G4",
+		"Standard_G5",
+	},
+}
+
+var hdInsightStormClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
+	Name:                    "roles.0.worker_node",
+	CanSpecifyInstanceCount: true,
+	MinInstanceCount:        1,
+	// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
+	MaxInstanceCount: 9999,
+	CanSpecifyDisks:  false,
+	ValidVmSizes: []string{
+		// TODO: update this
+		// TODO: are these the same for the other types?
+		// only certain sizes are valid for certain machine types for certain kinds
+		// otherwise you get an unhelpful error. this is an attempt to make a better UX
+		"Standard_A3",
+		"Standard_A4",
+		"Standard_A4_v2",
+		"Standard_A4m_v2",
+		"A6",
+		"A7",
+		"Standard_A8_v2",
+		"Standard_A8m_v2",
+		"Standard_D3_v2",
+		"Standard_D4_v2",
+		"Standard_D5_v2",
+		"Standard_D12_v2",
+		"Standard_D13_v2",
+		"Standard_D14_v2",
+		"Standard_E2_v3",
+		"Standard_E4_v3",
+		"Standard_E8_v3",
+		"Standard_E16_v3",
+		"Standard_E20_v3",
+		"Standard_E32_v3",
+		"Standard_E64_v3",
+		"Standard_E64i_v3",
+		"Standard_G2",
+		"Standard_G3",
+		"Standard_G4",
+		"Standard_G5",
+	},
+}
+
+var hdInsightStormClusterZookeeperNodeDefinition = azure.HDInsightNodeDefinition{
+	Name:                     "roles.0.zookeeper_node",
+	CanSpecifyInstanceCount:  false,
+	MinInstanceCount:         3,
+	MaxInstanceCount:         3,
+	CanSpecifyDisks:          false,
+	FixedTargetInstanceCount: utils.Int32(int32(3)),
+	ValidVmSizes: []string{
+		//// this is hard-coded at the API level
+		//"Medium",
+		"Standard_A4_V2",
+	},
+}
+
 func resourceArmHDInsightStormCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmHDInsightStormClusterCreate,
@@ -57,107 +152,11 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 				MaxItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"head_node": func() *schema.Schema {
-							validVmSizes := []string{
-								// TODO: are these the same for the other types?
-								// only certain sizes are valid for certain machine types for certain kinds
-								// otherwise you get an unhelpful error. this is an attempt to make a better UX
-								"Standard_A3",
-								"Standard_A4",
-								"Standard_A4_v2",
-								"Standard_A4m_v2",
-								"Standard_A6",
-								"Standard_A7",
-								"Standard_A8_v2",
-								"Standard_A8m_v2",
-								"Standard_D12_v2",
-								"Standard_D13_v2",
-								"Standard_D14_v2",
-								"Standard_D3_v2",
-								"Standard_D4_v2",
-								"Standard_D5_v2",
-								"Standard_E16_v3",
-								"Standard_E20_v3",
-								"Standard_E2_v3",
-								"Standard_E32_v3",
-								"Standard_E4_v3",
-								"Standard_E64_v3",
-								"Standard_E64i_v3",
-								"Standard_E8_v3",
-								"Standard_G2",
-								"Standard_G3",
-								"Standard_G4",
-								"Standard_G5",
-							}
-							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
-								Name:                    "roles.0.head_node",
-								CanSpecifyInstanceCount: false,
-								MinInstanceCount:        4,
-								MaxInstanceCount:        4,
-								CanSpecifyDisks:         false,
-								ValidVmSizes:            validVmSizes,
-							})
-						}(),
+						"head_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterHeadNodeDefinition),
 
-						"worker_node": func() *schema.Schema {
-							validVmSizes := []string{
-								// TODO: update this
-								// TODO: are these the same for the other types?
-								// only certain sizes are valid for certain machine types for certain kinds
-								// otherwise you get an unhelpful error. this is an attempt to make a better UX
-								"Standard_A3",
-								"Standard_A4",
-								"Standard_A4_v2",
-								"Standard_A4m_v2",
-								"A6",
-								"A7",
-								"Standard_A8_v2",
-								"Standard_A8m_v2",
-								"Standard_D3_v2",
-								"Standard_D4_v2",
-								"Standard_D5_v2",
-								"Standard_D12_v2",
-								"Standard_D13_v2",
-								"Standard_D14_v2",
-								"Standard_E2_v3",
-								"Standard_E4_v3",
-								"Standard_E8_v3",
-								"Standard_E16_v3",
-								"Standard_E20_v3",
-								"Standard_E32_v3",
-								"Standard_E64_v3",
-								"Standard_E64i_v3",
-								"Standard_G2",
-								"Standard_G3",
-								"Standard_G4",
-								"Standard_G5",
-							}
-							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
-								Name:                    "roles.0.worker_node",
-								CanSpecifyInstanceCount: true,
-								MinInstanceCount:        1,
-								// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
-								MaxInstanceCount: 9999,
-								CanSpecifyDisks:  false,
-								ValidVmSizes:     validVmSizes,
-							})
-						}(),
+						"worker_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterWorkerNodeDefinition),
 
-						"zookeeper_node": func() *schema.Schema {
-							validVmSizes := []string{
-								//// this is hard-coded at the API level
-								//"Medium",
-								"Standard_A4_V2",
-							}
-							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
-								Name:                    "roles.0.zookeeper_node",
-								CanSpecifyInstanceCount: false,
-								MinInstanceCount:        3,
-								MaxInstanceCount:        3,
-								CanSpecifyDisks:         false,
-								ValidVmSizes:            validVmSizes,
-							})
-						}(),
+						"zookeeper_node": azure.SchemaHDInsightNodeDefinition(hdInsightStormClusterZookeeperNodeDefinition),
 					},
 				},
 			},
