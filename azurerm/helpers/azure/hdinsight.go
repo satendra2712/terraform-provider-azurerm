@@ -386,7 +386,7 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, definition 
 	return &role, nil
 }
 
-func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, canSetDisks bool, existing []interface{}) []interface{} {
+func FlattenHDInsightNodeDefinition(input *hdinsight.Role, existing []interface{}, definition HDInsightNodeDefinition) []interface{} {
 	if input == nil {
 		return []interface{}{}
 	}
@@ -434,7 +434,7 @@ func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, can
 		}
 	}
 
-	if canSetCount {
+	if definition.CanSpecifyInstanceCount {
 		output["min_instance_count"] = 0
 		output["target_instance_count"] = 0
 
@@ -447,7 +447,7 @@ func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, can
 		}
 	}
 
-	if canSetDisks {
+	if definition.CanSpecifyDisks {
 		output["number_of_disks_per_node"] = 0
 		if input.DataDisksGroups != nil && len(*input.DataDisksGroups) > 0 {
 			group := (*input.DataDisksGroups)[0]

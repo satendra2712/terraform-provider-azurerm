@@ -387,19 +387,13 @@ func flattenHDInsightSparkRoles(d *schema.ResourceData, input *hdinsight.Compute
 	}
 
 	headNode := azure.FindHDInsightRole(input.Roles, "headnode")
-	headNodeCanSetCount := false
-	headNodeCanSetDisks := false
-	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, headNodeCanSetCount, headNodeCanSetDisks, existingHeadNodes)
+	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, existingHeadNodes, hdInsightSparkClusterHeadNodeDefinition)
 
 	workerNode := azure.FindHDInsightRole(input.Roles, "workernode")
-	workerNodeCanSetCount := true
-	workerNodeCanSetDisks := false
-	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, workerNodeCanSetCount, workerNodeCanSetDisks, existingWorkerNodes)
+	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, existingWorkerNodes, hdInsightSparkClusterWorkerNodeDefinition)
 
 	zookeeperNode := azure.FindHDInsightRole(input.Roles, "zookeepernode")
-	zookeeperNodeCanSetCount := false
-	zookeeperNodeCanSetDisks := false
-	zookeeperNodes := azure.FlattenHDInsightNodeDefinition(zookeeperNode, zookeeperNodeCanSetCount, zookeeperNodeCanSetDisks, existingZookeeperNodes)
+	zookeeperNodes := azure.FlattenHDInsightNodeDefinition(zookeeperNode, existingZookeeperNodes, hdInsightSparkClusterZookeeperNodeDefinition)
 
 	return []interface{}{
 		map[string]interface{}{
