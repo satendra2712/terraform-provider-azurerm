@@ -279,7 +279,7 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 	if canSpecifyDisks {
 		result["number_of_disks_per_node"] = &schema.Schema{
 			Type:         schema.TypeInt,
-			Optional:     true,
+			Required:     true,
 			ForceNew:     true,
 			ValidateFunc: validation.IntBetween(1, *maxNumberOfDisksPerNode),
 		}
