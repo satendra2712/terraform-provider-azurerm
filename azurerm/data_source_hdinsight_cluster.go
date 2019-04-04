@@ -25,6 +25,11 @@ func dataSourceArmHDInsightSparkCluster() *schema.Resource {
 				Computed: true,
 			},
 
+			"component_versions": {
+				Type:     schema.TypeMap,
+				Computed: true,
+			},
+
 			"kind": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -112,6 +117,7 @@ func dataSourceArmHDInsightClusterRead(d *schema.ResourceData, meta interface{})
 		d.Set("tier", string(props.Tier))
 
 		if def := props.ClusterDefinition; def != nil {
+			d.Set("component_versions", flattenHDInsightsDataSourceComponentVersions(def.ComponentVersion))
 			d.Set("kind", def.Kind)
 			if err := d.Set("gateway", azure.FlattenHDInsightsConfigurations(configuration.Value)); err != nil {
 				return fmt.Errorf("Error flattening `gateway`: %+v", err)
@@ -127,4 +133,18 @@ func dataSourceArmHDInsightClusterRead(d *schema.ResourceData, meta interface{})
 	flattenAndSetTags(d, resp.Tags)
 
 	return nil
+}
+
+func flattenHDInsightsDataSourceComponentVersions(input map[string]*string) map[string]string {
+	output := make(map[string]string)
+
+	for k, v := range input {
+		if v == nil {
+			continue
+		}
+
+		output[k] = *v
+	}
+
+	return output
 }
