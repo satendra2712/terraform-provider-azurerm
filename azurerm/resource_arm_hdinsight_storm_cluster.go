@@ -389,6 +389,7 @@ func flattenHDInsightStormRoles(d *schema.ResourceData, input *hdinsight.Compute
 	headNodeCanSetCount := false
 	headNodeSkuOverrides := map[string]string{
 		// TODO: try and determine these...
+		"large": "Standard_A3",
 	}
 	headNodes := azure.FlattenHDInsightNodeDefinition(headNode, headNodeCanSetCount, existingHeadNodes, headNodeSkuOverrides)
 
@@ -396,6 +397,7 @@ func flattenHDInsightStormRoles(d *schema.ResourceData, input *hdinsight.Compute
 	workerNodeCanSetCount := true
 	workerNodeSkuOverrides := map[string]string{
 		// TODO: try and determine these...
+		"large": "Standard_A4_V2",
 	}
 	workerNodes := azure.FlattenHDInsightNodeDefinition(workerNode, workerNodeCanSetCount, existingWorkerNodes, workerNodeSkuOverrides)
 

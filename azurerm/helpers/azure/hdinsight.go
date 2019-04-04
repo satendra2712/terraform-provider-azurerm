@@ -372,14 +372,16 @@ func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, exi
 			if username := osProfile.Username; username != nil {
 				output["username"] = *username
 			}
-
-			// TODO: SSH Keys if they're returned
 		}
 	}
 
+	// neither Password / SSH Keys are returned from the API, so we need to look them up to not force a diff
 	if len(existing) > 0 {
 		existingV := existing[0].(map[string]interface{})
 		output["password"] = existingV["password"].(string)
+
+		sshKeys := existingV["ssh_keys"].(*schema.Set).List()
+		output["ssh_keys"] = schema.NewSet(schema.HashString, sshKeys)
 	}
 
 	if profile := input.HardwareProfile; profile != nil {
