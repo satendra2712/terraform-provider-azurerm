@@ -280,6 +280,7 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 		result["number_of_disks_per_node"] = &schema.Schema{
 			Type:         schema.TypeInt,
 			Optional:     true,
+			ForceNew:     true,
 			ValidateFunc: validation.IntBetween(1, *maxNumberOfDisksPerNode),
 		}
 	}
@@ -360,17 +361,19 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyC
 
 	if canSpecifyDisks {
 		numberOfDisksPerNode := v["number_of_disks_per_node"].(int)
-		role.DataDisksGroups = &[]hdinsight.DataDisksGroups{
-			{
-				DisksPerNode: utils.Int32(int32(numberOfDisksPerNode)),
-			},
+		if numberOfDisksPerNode > 0 {
+			role.DataDisksGroups = &[]hdinsight.DataDisksGroups{
+				{
+					DisksPerNode: utils.Int32(int32(numberOfDisksPerNode)),
+				},
+			}
 		}
 	}
 
 	return &role, nil
 }
 
-func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, existing []interface{}, skuOverrides map[string]string) []interface{} {
+func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, canSetDisks bool, existing []interface{}, skuOverrides map[string]string) []interface{} {
 	if input == nil {
 		return []interface{}{}
 	}
@@ -430,6 +433,16 @@ func FlattenHDInsightNodeDefinition(input *hdinsight.Role, canSetCount bool, exi
 
 		if input.TargetInstanceCount != nil {
 			output["target_instance_count"] = int(*input.TargetInstanceCount)
+		}
+	}
+
+	if canSetDisks {
+		output["number_of_disks_per_node"] = 0
+		if input.DataDisksGroups != nil && len(*input.DataDisksGroups) > 0 {
+			group := (*input.DataDisksGroups)[0]
+			if group.DisksPerNode != nil {
+				output["number_of_disks_per_node"] = int(*group.DisksPerNode)
+			}
 		}
 	}
 
