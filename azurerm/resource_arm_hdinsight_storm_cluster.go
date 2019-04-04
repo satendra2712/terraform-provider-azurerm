@@ -348,24 +348,19 @@ func expandHDInsightStormRoles(input []interface{}) (*[]hdinsight.Role, error) {
 	v := input[0].(map[string]interface{})
 
 	headNodeRaw := v["head_node"].([]interface{})
-	headNodeCanSpecifyCount := false
-	headNodeTargetInstanceCount := utils.Int32(int32(2))
-	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, headNodeCanSpecifyCount, nil, headNodeTargetInstanceCount, false)
+	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, hdInsightStormClusterHeadNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `head_node`: %+v", err)
 	}
 
 	workerNodeRaw := v["worker_node"].([]interface{})
-	workerNodeCanSpecifyCount := true
-	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, workerNodeCanSpecifyCount, nil, nil, false)
+	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, hdInsightStormClusterWorkerNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `worker_node`: %+v", err)
 	}
 
 	zookeeperNodeRaw := v["zookeeper_node"].([]interface{})
-	zookeeperNodeCanSpecifyCount := false
-	zookeeperNodeTargetInstanceCount := utils.Int32(int32(3))
-	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, zookeeperNodeCanSpecifyCount, nil, zookeeperNodeTargetInstanceCount, false)
+	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, hdInsightStormClusterZookeeperNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `zookeeper_node`: %+v", err)
 	}

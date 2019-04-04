@@ -308,7 +308,7 @@ func SchemaHDInsightNodeDefinition(schemaLocation string, definition HDInsightNo
 	}
 }
 
-func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyCount bool, fixedMinCount *int32, fixedTargetCount *int32, canSpecifyDisks bool) (*hdinsight.Role, error) {
+func ExpandHDInsightNodeDefinition(name string, input []interface{}, definition HDInsightNodeDefinition) (*hdinsight.Role, error) {
 	v := input[0].(map[string]interface{})
 	vmSize := v["vm_size"].(string)
 	username := v["username"].(string)
@@ -359,7 +359,7 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyC
 		}
 	}
 
-	if canSpecifyCount {
+	if definition.CanSpecifyInstanceCount {
 		minInstanceCount := v["min_instance_count"].(int)
 		if minInstanceCount > 0 {
 			role.MinInstanceCount = utils.Int32(int32(minInstanceCount))
@@ -368,11 +368,11 @@ func ExpandHDInsightNodeDefinition(name string, input []interface{}, canSpecifyC
 		targetInstanceCount := v["target_instance_count"].(int)
 		role.TargetInstanceCount = utils.Int32(int32(targetInstanceCount))
 	} else {
-		role.MinInstanceCount = fixedMinCount
-		role.TargetInstanceCount = fixedTargetCount
+		role.MinInstanceCount = definition.FixedMinInstanceCount
+		role.TargetInstanceCount = definition.FixedTargetInstanceCount
 	}
 
-	if canSpecifyDisks {
+	if definition.CanSpecifyDisks {
 		numberOfDisksPerNode := v["number_of_disks_per_node"].(int)
 		if numberOfDisksPerNode > 0 {
 			role.DataDisksGroups = &[]hdinsight.DataDisksGroups{

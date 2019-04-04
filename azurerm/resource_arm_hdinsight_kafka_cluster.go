@@ -12,10 +12,11 @@ import (
 )
 
 var hdInsightKafkaClusterHeadNodeDefinition = azure.HDInsightNodeDefinition{
-	CanSpecifyInstanceCount: false,
-	MinInstanceCount:        2,
-	MaxInstanceCount:        2,
-	CanSpecifyDisks:         false,
+	CanSpecifyInstanceCount:  false,
+	MinInstanceCount:         2,
+	MaxInstanceCount:         2,
+	CanSpecifyDisks:          false,
+	FixedTargetInstanceCount: utils.Int32(int32(2)),
 	ValidVmSizes: []string{
 		// TODO: are these the same for the other types?
 		// only certain sizes are valid for certain machine types for certain kinds
@@ -90,10 +91,11 @@ var hdInsightKafkaClusterWorkerNodeDefinition = azure.HDInsightNodeDefinition{
 }
 
 var hdInsightKafkaClusterZookeeperNodeDefinition = azure.HDInsightNodeDefinition{
-	CanSpecifyInstanceCount: false,
-	MinInstanceCount:        3,
-	MaxInstanceCount:        3,
-	CanSpecifyDisks:         false,
+	CanSpecifyInstanceCount:  false,
+	MinInstanceCount:         3,
+	MaxInstanceCount:         3,
+	CanSpecifyDisks:          false,
+	FixedTargetInstanceCount: utils.Int32(int32(3)),
 	ValidVmSizes: []string{
 		// this is hard-coded at the API level
 		"Medium",
@@ -345,24 +347,19 @@ func expandHDInsightKafkaRoles(input []interface{}) (*[]hdinsight.Role, error) {
 	v := input[0].(map[string]interface{})
 
 	headNodeRaw := v["head_node"].([]interface{})
-	headNodeCanSpecifyCount := false
-	headNodeTargetInstanceCount := utils.Int32(int32(2))
-	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, headNodeCanSpecifyCount, nil, headNodeTargetInstanceCount, false)
+	headNode, err := azure.ExpandHDInsightNodeDefinition("headnode", headNodeRaw, hdInsightKafkaClusterHeadNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `head_node`: %+v", err)
 	}
 
 	workerNodeRaw := v["worker_node"].([]interface{})
-	workerNodeCanSpecifyCount := true
-	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, workerNodeCanSpecifyCount, nil, nil, true)
+	workerNode, err := azure.ExpandHDInsightNodeDefinition("workernode", workerNodeRaw, hdInsightKafkaClusterWorkerNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `worker_node`: %+v", err)
 	}
 
 	zookeeperNodeRaw := v["zookeeper_node"].([]interface{})
-	zookeeperNodeCanSpecifyCount := false
-	zookeeperNodeTargetInstanceCount := utils.Int32(int32(3))
-	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, zookeeperNodeCanSpecifyCount, nil, zookeeperNodeTargetInstanceCount, false)
+	zookeeperNode, err := azure.ExpandHDInsightNodeDefinition("zookeepernode", zookeeperNodeRaw, hdInsightKafkaClusterZookeeperNodeDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("Error expanding `zookeeper_node`: %+v", err)
 	}
