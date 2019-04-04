@@ -210,14 +210,24 @@ func ExpandHDInsightsStorageAccounts(input []interface{}) (*[]hdinsight.StorageA
 	return &results, nil
 }
 
-func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, maxCount int, validVMSizes []string, canSpecifyDisks bool, maxNumberOfDisksPerNode *int) *schema.Schema {
+type HDInsightNodeDefinition struct {
+	Name                    string
+	CanSpecifyInstanceCount bool
+	MinInstanceCount        int
+	MaxInstanceCount        int
+	ValidVmSizes            []string
+	CanSpecifyDisks         bool
+	MaxNumberOfDisksPerNode *int
+}
+
+func SchemaHDInsightNodeDefinition(definition HDInsightNodeDefinition) *schema.Schema {
 	result := map[string]*schema.Schema{
 		"vm_size": {
 			Type:     schema.TypeString,
 			Required: true,
 			ForceNew: true,
 			// TODO: re-enable me
-			//ValidateFunc: validation.StringInSlice(validVMSizes, false),
+			//ValidateFunc: validation.StringInSlice(definition.ValidVmSizes, false),
 		},
 		"username": {
 			Type:     schema.TypeString,
@@ -242,7 +252,7 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 			},
 			Set: schema.HashString,
 			ConflictsWith: []string{
-				fmt.Sprintf("%s.0.password", name),
+				fmt.Sprintf("%s.0.password", definition.Name),
 			},
 		},
 
@@ -261,27 +271,27 @@ func SchemaHDInsightNodeDefinition(name string, canSpecifyCount bool, minCount, 
 		},
 	}
 
-	if canSpecifyCount {
+	if definition.CanSpecifyInstanceCount {
 		// TODO: should we make this validate func optional?
 		result["min_instance_count"] = &schema.Schema{
 			Type:         schema.TypeInt,
 			Optional:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.IntBetween(minCount, maxCount),
+			ValidateFunc: validation.IntBetween(definition.MinInstanceCount, definition.MaxInstanceCount),
 		}
 		result["target_instance_count"] = &schema.Schema{
 			Type:         schema.TypeInt,
 			Required:     true,
-			ValidateFunc: validation.IntBetween(minCount, maxCount),
+			ValidateFunc: validation.IntBetween(definition.MinInstanceCount, definition.MaxInstanceCount),
 		}
 	}
 
-	if canSpecifyDisks {
+	if definition.CanSpecifyDisks {
 		result["number_of_disks_per_node"] = &schema.Schema{
 			Type:         schema.TypeInt,
 			Required:     true,
 			ForceNew:     true,
-			ValidateFunc: validation.IntBetween(1, *maxNumberOfDisksPerNode),
+			ValidateFunc: validation.IntBetween(1, *definition.MaxNumberOfDisksPerNode),
 		}
 	}
 

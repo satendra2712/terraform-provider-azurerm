@@ -89,11 +89,14 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 								"Standard_G4",
 								"Standard_G5",
 							}
-							canSpecifyCount := false
-							minInstanceCount := 4
-							maxInstanceCount := 4
-							canSpecifyDisks := false
-							return azure.SchemaHDInsightNodeDefinition("roles.0.head_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
+							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
+								Name:                    "roles.0.head_node",
+								CanSpecifyInstanceCount: false,
+								MinInstanceCount:        4,
+								MaxInstanceCount:        4,
+								CanSpecifyDisks:         false,
+								ValidVmSizes:            validVmSizes,
+							})
 						}(),
 
 						"worker_node": func() *schema.Schema {
@@ -129,12 +132,15 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 								"Standard_G4",
 								"Standard_G5",
 							}
-							canSpecifyCount := true
-							// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
-							minInstanceCount := 1
-							maxInstanceCount := 9999
-							canSpecifyDisks := false
-							return azure.SchemaHDInsightNodeDefinition("roles.0.worker_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
+							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
+								Name:                    "roles.0.worker_node",
+								CanSpecifyInstanceCount: true,
+								MinInstanceCount:        1,
+								// can't find a hard limit - appears to be limited by the subscription; setting something sensible for now
+								MaxInstanceCount: 9999,
+								CanSpecifyDisks:  false,
+								ValidVmSizes:     validVmSizes,
+							})
 						}(),
 
 						"zookeeper_node": func() *schema.Schema {
@@ -143,11 +149,14 @@ func resourceArmHDInsightStormCluster() *schema.Resource {
 								//"Medium",
 								"Standard_A4_V2",
 							}
-							canSpecifyCount := false
-							minInstanceCount := 3
-							maxInstanceCount := 3
-							canSpecifyDisks := false
-							return azure.SchemaHDInsightNodeDefinition("roles.0.zookeeper_node", canSpecifyCount, minInstanceCount, maxInstanceCount, validVmSizes, canSpecifyDisks, nil)
+							return azure.SchemaHDInsightNodeDefinition(azure.HDInsightNodeDefinition{
+								Name:                    "roles.0.zookeeper_node",
+								CanSpecifyInstanceCount: false,
+								MinInstanceCount:        3,
+								MaxInstanceCount:        3,
+								CanSpecifyDisks:         false,
+								ValidVmSizes:            validVmSizes,
+							})
 						}(),
 					},
 				},
