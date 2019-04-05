@@ -163,8 +163,11 @@ func TestAccAzureRMHDInsightHadoopCluster_sshKeys(t *testing.T) {
 				ImportStateVerify: true,
 				ImportStateVerifyIgnore: []string{
 					"storage_account",
+					"roles.0.head_node.0.ssh_keys",
 					"roles.0.head_node.0.vm_size",
+					"roles.0.worker_node.0.ssh_keys",
 					"roles.0.worker_node.0.vm_size",
+					"roles.0.zookeeper_node.0.ssh_keys",
 					"roles.0.zookeeper_node.0.vm_size",
 				},
 			},
