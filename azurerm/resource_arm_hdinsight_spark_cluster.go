@@ -105,7 +105,7 @@ func resourceArmHDInsightSparkCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmHDInsightSparkClusterCreate,
 		Read:   resourceArmHDInsightSparkClusterRead,
-		Update: hdinsightClusterUpdate("Spark"),
+		Update: hdinsightClusterUpdate("Spark", resourceArmHDInsightSparkClusterRead),
 		Delete: hdinsightClusterDelete("Spark"),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,

@@ -106,7 +106,7 @@ func resourceArmHDInsightKafkaCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceArmHDInsightKafkaClusterCreate,
 		Read:   resourceArmHDInsightKafkaClusterRead,
-		Update: hdinsightClusterUpdate("Kafka"),
+		Update: hdinsightClusterUpdate("Kafka", resourceArmHDInsightKafkaClusterRead),
 		Delete: hdinsightClusterDelete("Kafka"),
 		Importer: &schema.ResourceImporter{
 			State: schema.ImportStatePassthrough,
