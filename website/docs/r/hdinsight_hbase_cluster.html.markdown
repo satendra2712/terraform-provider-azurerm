@@ -1,14 +1,14 @@
 ---
 layout: "azurerm"
-page_title: "Azure Resource Manager: azurerm_hdinsight_hadoop_cluster"
-sidebar_current: "docs-azurerm-resource-hdinsight-hadoop-cluster"
+page_title: "Azure Resource Manager: azurerm_hdinsight_hbase_cluster"
+sidebar_current: "docs-azurerm-resource-hdinsight-hbase-cluster"
 description: |-
-  Manages a HDInsight Hadoop Cluster.
+  Manages a HDInsight HBase Cluster.
 ---
 
-# azurerm_hdinsight_hadoop_cluster
+# azurerm_hdinsight_hbase_cluster
 
-Manages a HDInsight Hadoop Cluster.
+Manages a HDInsight HBase Cluster.
 
 ## Example Usage
 
@@ -33,7 +33,7 @@ resource "azurerm_storage_container" "example" {
   container_access_type = "private"
 }
 
-resource "azurerm_hdinsight_hadoop_cluster" "example" {
+resource "azurerm_hdinsight_hbase_cluster" "example" {
   name                = "example-hdicluster"
   resource_group_name = "${azurerm_resource_group.example.name}"
   location            = "${azurerm_resource_group.example.location}"
@@ -41,7 +41,7 @@ resource "azurerm_hdinsight_hadoop_cluster" "example" {
   tier                = "Standard"
 
   component_version {
-    hadoop = "2.7"
+    hbase = "1.1"
   }
 
   gateway {
@@ -64,7 +64,7 @@ resource "azurerm_hdinsight_hadoop_cluster" "example" {
     }
 
     worker_node {
-      vm_size                  = "Standard_D4_V2"
+      vm_size                  = "Standard_D3_V2"
       username                 = "acctestusrvm"
       password                 = "AccTestvdSC4daf986!"
       target_instance_count    = 3
@@ -83,11 +83,11 @@ resource "azurerm_hdinsight_hadoop_cluster" "example" {
 
 The following arguments are supported:
 
-* `name` - (Required) Specifies the name for this HDInsight Hadoop Cluster. Changing this forces a new resource to be created.
+* `name` - (Required) Specifies the name for this HDInsight HBase Cluster. Changing this forces a new resource to be created.
 
-* `resource_group_name` - (Required) Specifies the name of the Resource Group in which this HDInsight Hadoop Cluster should exist. Changing this forces a new resource to be created.
+* `resource_group_name` - (Required) Specifies the name of the Resource Group in which this HDInsight HBase Cluster should exist. Changing this forces a new resource to be created.
 
-* `location` - (Required) Specifies the Azure Region which this HDInsight Hadoop Cluster should exist. Changing this forces a new resource to be created.
+* `location` - (Required) Specifies the Azure Region which this HDInsight HBase Cluster should exist. Changing this forces a new resource to be created.
 
 * `cluster_version` - (Required) Specifies the Version of HDInsights which should be used for this Cluster. Changing this forces a new resource to be created.
 
@@ -99,17 +99,17 @@ The following arguments are supported:
 
 * `storage_account` - (Required) One or more `storage_account` block as defined below.
 
-* `tier` - (Required) Specifies the Tier which should be used for this HDInsight Hadoop Cluster. Possible values are `Standard` or `Premium`. Changing this forces a new resource to be created.
+* `tier` - (Required) Specifies the Tier which should be used for this HDInsight HBase Cluster. Possible values are `Standard` or `Premium`. Changing this forces a new resource to be created.
 
 ---
 
-* `tags` - (Optional) A map of Tags which should be assigned to this HDInsight Hadoop Cluster.
+* `tags` - (Optional) A map of Tags which should be assigned to this HDInsight HBase Cluster.
 
 ---
 
 A `component_version` block supports the following:
 
-* `hadoop` - (Required) The version of Hadoop which should be used for this HDInsight Hadoop Cluster. Changing this forces a new resource to be created.
+* `hbase` - (Required) The version of HBase which should be used for this HDInsight HBase Cluster. Changing this forces a new resource to be created.
 
 ---
 
@@ -155,7 +155,7 @@ A `roles` block supports the following:
 
 A `storage_account` block supports the following:
 
-* `is_default` - (Required) Is this the Default Storage Account for the HDInsight Hadoop Cluster? Changing this forces a new resource to be created.
+* `is_default` - (Required) Is this the Default Storage Account for the HDInsight HBase Cluster? Changing this forces a new resource to be created.
 
 -> **NOTE:** One of the `storage_account` blocks must be marked as the default.
 
@@ -209,16 +209,16 @@ A `zookeeper_node` block supports the following:
 
 The following attributes are exported:
 
-* `id` - The ID of the HDInsight Hadoop Cluster.
+* `id` - The ID of the HDInsight HBase Cluster.
 
-* `https_endpoint` - The HTTPS Connectivity Endpoint for this HDInsight Hadoop Cluster.
+* `https_endpoint` - The HTTPS Connectivity Endpoint for this HDInsight HBase Cluster.
 
-* `ssh_endpoint` - The SSH Connectivity Endpoint for this HDInsight Hadoop Cluster.
+* `ssh_endpoint` - The SSH Connectivity Endpoint for this HDInsight HBase Cluster.
 
 ## Import
 
-HDInsight Hadoop Clusters can be imported using the `resource id`, e.g.
+HDInsight HBase Clusters can be imported using the `resource id`, e.g.
 
 ```shell
-terraform import azurerm_hdinsight_hadoop_cluster.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.HDInsight/clusters/cluster1}
+terraform import azurerm_hdinsight_hbase_cluster.test /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/mygroup1/providers/Microsoft.HDInsight/clusters/cluster1}
 ```
