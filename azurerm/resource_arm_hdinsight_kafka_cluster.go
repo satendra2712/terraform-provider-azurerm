@@ -332,7 +332,7 @@ func resourceArmHDInsightKafkaClusterRead(d *schema.ResourceData, meta interface
 func expandHDInsightKafkaComponentVersion(input []interface{}) map[string]*string {
 	vs := input[0].(map[string]interface{})
 	return map[string]*string{
-		"Kafka": utils.String(vs["kafka"].(string)),
+		"kafka": utils.String(vs["kafka"].(string)),
 	}
 }
 
@@ -345,7 +345,7 @@ func flattenHDInsightKafkaComponentVersion(input map[string]*string) []interface
 	}
 	return []interface{}{
 		map[string]interface{}{
-			"Kafka": kafkaVersion,
+			"kafka": kafkaVersion,
 		},
 	}
 }
