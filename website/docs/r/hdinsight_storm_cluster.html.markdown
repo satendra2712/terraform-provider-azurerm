@@ -127,6 +127,8 @@ A `gateway` block supports the following:
 
 A `head_node` block supports the following:
 
+-> **NOTE:** This is also known as the `nimbus` node.
+
 * `username` - (Required) The Username of the local administrator for the Head Nodes. Changing this forces a new resource to be created.
 
 * `vm_size` - (Required) The Size of the Virtual Machine which should be used as the Head Nodes. Changing this forces a new resource to be created.
@@ -168,6 +170,8 @@ A `storage_account` block supports the following:
 ---
 
 A `worker_node` block supports the following:
+
+-> **NOTE:** This is also known as the `supervisor` node.
 
 * `username` - (Required) The Username of the local administrator for the Worker Nodes. Changing this forces a new resource to be created.
 
